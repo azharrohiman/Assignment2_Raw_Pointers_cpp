@@ -89,15 +89,9 @@ namespace RHMMUH005 {
 	// extract slice sliceId and write to output
 	void VolImage::extract(int sliceId, string output_prefix) {
 
-		const int dir_err = mkdir(output_prefix, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		if (-1 == dir_err) {
-			cout << "Error creating directory!n");
-			exit(1);
-		}
-
 		ofstream output;
 		output.open(output_prefix + ".dat");
-		output << VolImage::width << " " << VolImage::height << "1";
+		output << VolImage::width << " " << VolImage::height << " 1";
 		output.close();
 		cout << output_prefix << ".dat file created" << endl;
 
@@ -135,9 +129,9 @@ int main(int argc, char* argv[]) {
 	string baseName = argv[1];
 	//vector<unsigned char**> slices;
 
-	VolImage vol1;
+	VolImage volObj;
 
-	if (!vol1.VolImage::readImages(baseName)) {
+	if (!volObj.VolImage::readImages(baseName)) {
 		cout << "Couldn't open file" << endl;
 	}
 	else {
@@ -148,14 +142,14 @@ int main(int argc, char* argv[]) {
 
 	if (argc == 5) {
 		int sliceID = atoi(argv[3]);
-		vol1.VolImage::extract(sliceID, argv[4]);
+		volObj.VolImage::extract(sliceID, argv[4]);
 	}
 
 	if (argc == 6) {
 		int sliceI = atoi(argv[3]);
 		int sliceJ = atoi(argv[4]);
 		cout << "Computing difference map between " << argv[3] << " and " << argv[4] << endl;
-		vol1.VolImage::diffmap(sliceI, sliceJ, argv[5]);
+		volObj.VolImage::diffmap(sliceI, sliceJ, argv[5]);
 	}
 
 	//cout << vol1.VolImage::getWidth() << endl;
