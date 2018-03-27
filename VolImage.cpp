@@ -8,6 +8,7 @@
 // for testing
 #include <vector>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace RHMMUH005;
 using namespace std;
@@ -89,20 +90,23 @@ namespace RHMMUH005 {
 	// extract slice sliceId and write to output
 	void VolImage::extract(int sliceId, string output_prefix) {
 
-		ofstream output;
-		output.open(output_prefix + ".dat");
-		output << VolImage::width << " " << VolImage::height << " 1";
-		output.close();
+		string output_prefix_path = output_prefix + "/" + output_prefix + ".dat";
+		const char* datPath = output_prefix_path.c_str();
+		ofstream file(datPath);
+		file << VolImage::width << " " << VolImage::height << " 1";
+		file.close();
 		cout << output_prefix << ".dat file created" << endl;
 
-		output.open(output_prefix + ".raw");
+		string output_prefix_raw = output_prefix + "/" + output_prefix + ".raw";
+		const char* rawPath = output_prefix_raw.c_str();
+		ofstream rawFile(rawPath);
 
 		for (int i = 0; i < VolImage::height; i++) {
 			for (int j = 0; j < VolImage::width; j++) {
-				output << VolImage::slices[sliceId][i][j];
+				rawFile << VolImage::slices[sliceId][i][j];
 			}
 		}
-		output.close();
+		rawFile.close();
 	}
 
 	// number of bytes used to store image data bytes
@@ -142,6 +146,8 @@ int main(int argc, char* argv[]) {
 
 	if (argc == 5) {
 		int sliceID = atoi(argv[3]);
+		mkdir("output", ACCESSPERMS);
+		cout << "Extracting Slice " << argv[3] << endl;
 		volObj.VolImage::extract(sliceID, argv[4]);
 	}
 
