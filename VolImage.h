@@ -16,6 +16,7 @@ namespace RHMMUH005 {
 
 		int width, height;			// width and height of image stack
 		std::vector<unsigned char**> slices;	// data for each slice, in order
+		//unsigned char** rows;
 
 	public: // public members
 

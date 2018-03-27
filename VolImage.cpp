@@ -23,7 +23,12 @@ namespace RHMMUH005 {
 
 	// destructor
 	VolImage::~VolImage() {
-
+		for (int i = 0; i < VolImage::slices.size(); i++) {
+			for (int j = 0; j < VolImage::height; j++) {
+				delete [] VolImage::slices[i][j];
+			}
+			delete [] VolImage::slices[i];
+		}
 	}
 
 	// populate the object with images in stack and
@@ -47,9 +52,6 @@ namespace RHMMUH005 {
 		VolImage::height = atoi(tokens[1].c_str());
 
 		numberOfImages = atoi(tokens.back().c_str());
-		//cout << VolImage::width << endl;
-		//cout << VolImage::height << endl;
-		//cout << numberOfImages << endl;
 
 		for (int i = 0; i < numberOfImages; i++) {
 			baseName = "brain_mri_raws";
@@ -112,36 +114,46 @@ namespace RHMMUH005 {
 	// number of bytes used to store image data bytes
 	// and pointers (ignore vector<> container, dims etc)
 	int VolImage::volImageSize(void) {
-		return 0;
-	}
-
-	int VolImage::getWidth() {
-		return VolImage::width;
-	}
-
-	vector<unsigned char**> VolImage::getSlices() {
-		return VolImage::slices;
+		int length = sizeof(slices);
+		return length;
 	}
 
 };
 
 int main(int argc, char* argv[]) {
 
-	//cout << argc << endl;
-	//cout << argv[0] << endl;
+	VolImage volObj;
+
+	if (argc == 2) {
+		if (volObj.VolImage::readImages(argv[1])) {
+			int numberOfImages;
+			vector<string> tokens;
+			string word;
+			string fileName = (string)argv[1] + "/MRI.data";
+			ifstream file(fileName);
+
+			if (!file) {
+				return false;
+			}
+
+			while (getline(file, word, ' ')) {
+				tokens.push_back(word);
+			}
+
+			numberOfImages = atoi(tokens.back().c_str());
+			cout << "Number of images: " << numberOfImages << endl;
+			cout << "Number of bytes required: " << volObj.VolImage::volImageSize() << endl;
+		}
+		return 0;
+	}
 
 	string baseName = argv[1];
-	//vector<unsigned char**> slices;
-
-	VolImage volObj;
 
 	if (!volObj.VolImage::readImages(baseName)) {
 		cout << "Couldn't open file" << endl;
 	}
 	else {
 		cout << "Reading images..." << endl;
-		//slices = vol1.VolImage::getSlices();
-		//cout << slices[122] << endl;
 	}
 
 	if (argc == 5) {
@@ -158,7 +170,6 @@ int main(int argc, char* argv[]) {
 		volObj.VolImage::diffmap(sliceI, sliceJ, argv[5]);
 	}
 
-	//cout << vol1.VolImage::getWidth() << endl;
 	return 0;
 }
 
