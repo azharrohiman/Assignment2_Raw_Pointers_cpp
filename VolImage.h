@@ -38,6 +38,8 @@ namespace RHMMUH005 {
 
 		int getWidth();
 
+		std::vector<unsigned char**> getSlices();
+
 	};
 }
 
