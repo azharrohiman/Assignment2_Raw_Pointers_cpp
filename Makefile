@@ -16,4 +16,7 @@ extract: volimage
 	./volimage "brain_mri_raws" -x 10 "output"
 
 clean:
-	rm *.o volimage
+	rm -f *.o volimage
+	rm -f *.dat
+	rm -f *.raw
+	rm -rf ./output
